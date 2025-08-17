@@ -14,6 +14,7 @@
       color: white;
       height: 100vh;
       overflow-x: hidden;
+      touch-action: pan-y; /* Разрешаем только вертикальные свайпы */
     }
 
     /* Стили для главной страницы */
@@ -1565,7 +1566,7 @@
             <h2>Магазин 3</h2>
            <button onclick="window.location.href='https://t.me/FOLLENSHAIDbot?startapp=0e7a8c5fce5a7411';">Вдуем вместе!</button>
           </div>
-          <svg viewBox="0 0 24 24"><path d="M11 9h2V3h-2v6zm5-6v6h2V3h-2zM6 3v6h2V3H6zM4 10v2h16v-2H4zm0 4v7h16v-7H4z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M11 9h2V3h-2v6zm5-6v6h2V3h-2zM6 3v6h2V3H6zm-2 7v2h16v-2H4zm0 4v7h16v-7H4z"/></svg>
         </div>
         <div class="dots">
           <div class="dot active"></div>
@@ -2319,8 +2320,8 @@ function updateActiveNav(activeItem) {
       }
     }
 
-    // ===== ФУНКЦИОНАЛ СВАЙПА ДЛЯ ОТКРЫТИЯ СТРАНИЦЫ ТОВАРОВ =====
-    let startY, currentY, isSwipingDown = false;
+    // ===== ИСПРАВЛЕННЫЙ ФУНКЦИОНАЛ СВАЙПА =====
+    let startY, currentY, isSwiping = false;
     let productsPageVisible = false;
     const productsPage = document.getElementById('products-page');
     const bottomNav = document.querySelector('.bottom-nav');
@@ -2363,20 +2364,20 @@ function updateActiveNav(activeItem) {
     mainPage.addEventListener('touchstart', (e) => {
       if (window.scrollY <= 0 && !productsPageVisible) {
         startY = e.touches[0].clientY;
-        isSwipingDown = true;
+        isSwiping = true;
       }
     }, { passive: true });
 
     mainPage.addEventListener('touchmove', (e) => {
-      if (!isSwipingDown) return;
+      if (!isSwiping) return;
       
       currentY = e.touches[0].clientY;
       const dy = currentY - startY;
       
-      if (dy > 50) {
+      if (dy > 50) { // Свайп вниз
         e.preventDefault();
         showProductsPage();
-        isSwipingDown = false;
+        isSwiping = false;
       }
     }, { passive: false });
 
@@ -2385,17 +2386,18 @@ function updateActiveNav(activeItem) {
       if (productsPageVisible && window.scrollY <= 0) {
         startY = e.touches[0].clientY;
         productsPage.classList.add('swipe-active');
+        isSwiping = true;
       }
     }, { passive: true });
 
     productsPage.addEventListener('touchmove', (e) => {
-      if (!productsPageVisible) return;
+      if (!isSwiping || !productsPageVisible) return;
       
       currentY = e.touches[0].clientY;
       const dy = startY - currentY;
       
       if (window.scrollY <= 0) {
-        if (dy > 0) {
+        if (dy > 0) { // Свайп вверх
           e.preventDefault();
           // Плавное затемнение при свайпе
           productsPage.style.opacity = `${1 - dy / 300}`;
@@ -2404,10 +2406,11 @@ function updateActiveNav(activeItem) {
     }, { passive: false });
 
     productsPage.addEventListener('touchend', (e) => {
-      if (!productsPageVisible) return;
+      if (!isSwiping || !productsPageVisible) return;
       
       const dy = startY - currentY;
       productsPage.classList.remove('swipe-active');
+      isSwiping = false;
       
       if (dy > 100 && window.scrollY <= 0) {
         hideProductsPage();
@@ -2419,7 +2422,7 @@ function updateActiveNav(activeItem) {
 
     // Очищаем флаги при окончании касания
     document.addEventListener('touchend', () => {
-      isSwipingDown = false;
+      isSwiping = false;
     });
 
     // ===== ФУНКЦИИ ДЛЯ СТРАНИЦЫ ТОВАРОВ =====
