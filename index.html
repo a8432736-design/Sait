@@ -118,7 +118,7 @@
       background: #ffdb4d;
     }
 
-    /* Поиск (только для главной) */
+    /* Поиск (обновленный стиль) */
     .top-bar {
       width: 100%;
       max-width: 800px;
@@ -136,47 +136,10 @@
       border-radius: 25px;
       padding: 10px 14px;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow:
-        0 0 6px rgba(255, 255, 255, 0.3),
-        0 0 10px rgba(255, 255, 255, 0.2),
-        0 0 20px rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
       transition: box-shadow 0.4s ease;
       width: 100%;
       max-width: 100%;
       position: relative;
-    }
-
-    .search-container.glowing {
-      animation: glow-border 1.5s ease forwards;
-    }
-
-@keyframes glow-border {
-      0% {
-        box-shadow:
-          0 0 6px rgba(255, 255, 255, 0.3),
-          0 0 10px rgba(255, 255, 255, 0.2),
-          0 0 20px rgba(255, 255, 255, 0.1);
-      }
-      50% {
-        box-shadow:
-          0 0 12px #fff,
-          0 0 24px #fff,
-          0 0 40px #fff;
-      }
-      100% {
-        box-shadow:
-          0 0 6px rgba(255, 255, 255, 0.3),
-          0 0 10px rgba(255, 255, 255, 0.2),
-          0 0 20px rgba(255, 255, 255, 0.1);
-      }
-    }
-
-    .icon {
-      color: #ccc;
-      font-size: 18px;
-      user-select: none;
-      flex-shrink: 0;
     }
 
     .search-container input {
@@ -190,6 +153,10 @@
       caret-color: #fff;
       padding-right: 12px;
       min-width: 0;
+    }
+
+    .search-container input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .cancel-button {
@@ -277,132 +244,132 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
 
-.card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-.card-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-}
+    .card-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
 
-.card-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Центрируем содержимое */
-  height: 100%;
-  padding-right: 10px;
-}
+    .card-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Центрируем содержимое */
+      height: 100%;
+      padding-right: 10px;
+    }
 
-.card-left h2 {
-  font-size: 17px; /* Уменьшен размер шрифта */
-  font-weight: 700;
-  margin: 0 0 6px 0; /* Уменьшен отступ снизу */
-  color: #fff;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
-}
+    .card-left h2 {
+      font-size: 17px; /* Уменьшен размер шрифта */
+      font-weight: 700;
+      margin: 0 0 6px 0; /* Уменьшен отступ снизу */
+      color: #fff;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
 
-.card-left button {
-  background-color: #ffffff;
-  color: #000000;
-  padding: 6px 13px; /* Уменьшен размер кнопки */
-  font-size: 15px; /* Уменьшен размер шрифта */
-  font-weight: 700;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  align-self: flex-start;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
-  margin-top: 0;
-}
+    .card-left button {
+      background-color: #ffffff;
+      color: #000000;
+      padding: 6px 13px; /* Уменьшен размер кнопки */
+      font-size: 15px; /* Уменьшен размер шрифта */
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+      margin-top: 0;
+    }
 
-.card-left button:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-1px); /* Уменьшен эффект при наведении */
-  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
-}
+    .card-left button:hover {
+      background-color: #f0f0f0;
+      transform: translateY(-1px); /* Уменьшен эффект при наведении */
+      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.3);
+    }
 
-.card-left button:active {
-  transform: scale(0.96);
-}
+    .card-left button:active {
+      transform: scale(0.96);
+    }
 
-.card svg {
-  width: 28px; /* Уменьшен размер иконки */
-  height: 28px;
-  fill: #fff;
-  opacity: 0.85;
-  margin-left: 10px;
-  flex-shrink: 0;
-}
+    .card svg {
+      width: 28px; /* Уменьшен размер иконки */
+      height: 28px;
+      fill: #fff;
+      opacity: 0.85;
+      margin-left: 10px;
+      flex-shrink: 0;
+    }
 
-.carousel-dots {
-  position: absolute;
-  bottom: 10px;
-  right: 20px;
-  display: flex;
-  flex-direction: row; /* Явно указываем горизонтальное направление */
-  flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
-  align-items: center;
-  justify-content: center; /* Центрируем точки */
-  gap: 8px;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  z-index: 10;
-  /* Важно: сбрасываем все возможные наследуемые стили */
-  margin: 0;
-  list-style: none;
-}.carousel-dots {
-  position: absolute;
-  bottom: 10px;
-  right: 20px;
-  display: flex;
-  flex-direction: row; /* Явно указываем горизонтальное направление */
-  flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
-  align-items: center;
-  justify-content: center; /* Центрируем точки */
-  gap: 8px;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  z-index: 10;
-  /* Важно: сбрасываем все возможные наследуемые стили */
-  margin: 0;
-  list-style: none;
-}
+    .carousel-dots {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      display: flex;
+      flex-direction: row; /* Явно указываем горизонтальное направление */
+      flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
+      align-items: center;
+      justify-content: center; /* Центрируем точки */
+      gap: 8px;
+      padding: 4px 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      z-index: 10;
+      /* Важно: сбрасываем все возможные наследуемые стили */
+      margin: 0;
+      list-style: none;
+    }.carousel-dots {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      display: flex;
+      flex-direction: row; /* Явно указываем горизонтальное направление */
+      flex-wrap: nowrap; /* Запрещаем перенос на новую строку */
+      align-items: center;
+      justify-content: center; /* Центрируем точки */
+      gap: 8px;
+      padding: 4px 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      z-index: 10;
+      /* Важно: сбрасываем все возможные наследуемые стили */
+      margin: 0;
+      list-style: none;
+    }
 
-/* Точки */
-.dot {
-  display: inline-block; /* На случай, если flex не сработает */
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.4);
-  transition: all 0.3s;
-}
+    /* Точки */
+    .dot {
+      display: inline-block; /* На случай, если flex не сработает */
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transition: all 0.3s;
+    }
 
-.dot.active {
-  background-color: #ffffff;
-  transform: scale(1.1);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
-}
+    .dot.active {
+      background-color: #ffffff;
+      transform: scale(1.1);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+    }
 
-.dot.active {
-  background-color: #ffffff;
-  transform: scale(1.2);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
-}
+    .dot.active {
+      background-color: #ffffff;
+      transform: scale(1.2);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+    }
 .card {
   position: relative;
   padding-bottom: 25px; /* Место для точек */
@@ -2404,9 +2371,9 @@ function updateActiveNav(activeItem) {
       if (!isSwipingDown) return;
       
       currentY = e.touches[0].clientY;
-      const deltaY = currentY - startY;
+      const dy = currentY - startY;
       
-      if (deltaY > 50) {
+      if (dy > 50) {
         e.preventDefault();
         showProductsPage();
         isSwipingDown = false;
@@ -2425,13 +2392,13 @@ function updateActiveNav(activeItem) {
       if (!productsPageVisible) return;
       
       currentY = e.touches[0].clientY;
-      const deltaY = startY - currentY;
+      const dy = startY - currentY;
       
       if (window.scrollY <= 0) {
-        if (deltaY > 0) {
+        if (dy > 0) {
           e.preventDefault();
           // Плавное затемнение при свайпе
-          productsPage.style.opacity = `${1 - deltaY / 300}`;
+          productsPage.style.opacity = `${1 - dy / 300}`;
         }
       }
     }, { passive: false });
@@ -2439,10 +2406,10 @@ function updateActiveNav(activeItem) {
     productsPage.addEventListener('touchend', (e) => {
       if (!productsPageVisible) return;
       
-      const deltaY = startY - currentY;
+      const dy = startY - currentY;
       productsPage.classList.remove('swipe-active');
       
-      if (deltaY > 100 && window.scrollY <= 0) {
+      if (dy > 100 && window.scrollY <= 0) {
         hideProductsPage();
       } else {
         // Возвращаем нормальную прозрачность если не досвайпнули
