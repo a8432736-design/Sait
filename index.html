@@ -2320,80 +2320,149 @@ function updateActiveNav(activeItem) {
       }
     }
 
-   // ===== ИСПРАВЛЕННЫЙ ФУНКЦИОНАЛ СВАЙПА =====
-let startY, currentY, isSwiping = false;
-let productsPageVisible = false;
+// ===== КОРРЕКТНЫЙ ФУНКЦИОНАЛ СВАЙПА =====
+let startY, currentY;
+const swipeThreshold = 50; // Порог срабатывания свайпа
 const productsPage = document.getElementById('products-page');
 const bottomNav = document.querySelector('.bottom-nav');
 
-// Функция для показа страницы товаров
+// Показ страницы товаров (свайп ВНИЗ на главной)
 function showProductsPage() {
-  productsPageVisible = true;
-  bottomNav.style.transition = 'transform 0.4s cubic-bezier(0.28, 0.11, 0.32, 1)';
-  bottomNav.style.transform = 'translateY(100%)';
-  
   productsPage.style.display = 'block';
-  productsPage.style.opacity = '0';
   productsPage.style.transform = 'translateY(100%)';
-  productsPage.style.transition = 'transform 0.4s cubic-bezier(0.28, 0.11, 0.32, 1), opacity 0.3s';
   
+  // Анимация появления
   setTimeout(() => {
-    productsPage.style.opacity = '1';
     productsPage.style.transform = 'translateY(0)';
+    bottomNav.style.transform = 'translateY(100%)';
   }, 10);
-  
-  // Загружаем товары при первом открытии
-  if (document.getElementById('productsFeed').children.length === 0) {
-    loadProductsData();
-  }
 }
 
-// Функция для скрытия страницы товаров
+// Скрытие страницы товаров (свайп ВВЕРХ на товарах)
 function hideProductsPage() {
-  productsPageVisible = false;
   productsPage.style.transform = 'translateY(100%)';
-  productsPage.style.opacity = '0';
+  bottomNav.style.transform = 'translateY(0)';
   
   setTimeout(() => {
     productsPage.style.display = 'none';
-    bottomNav.style.transform = 'translateY(0)';
-  }, 400);
+  }, 300);
 }
 
-// Обработчик начала касания
-function handleTouchStart(e) {
+// Обработчики для главной страницы
+mainPage.addEventListener('touchstart', (e) => {
   if (window.scrollY <= 0) {
     startY = e.touches[0].clientY;
-    isSwiping = true;
   }
-}
+}, {passive: true});
 
-// Обработчик движения пальца
-function handleTouchMove(e) {
-  if (!isSwiping) return;
+mainPage.addEventListener('touchmove', (e) => {
+  if (!startY) return;
   
   currentY = e.touches[0].clientY;
   const dy = currentY - startY;
   
-  // Для главной страницы: свайп ВНИЗ (положительный dy) открывает товары
-  if (!productsPageVisible && dy > 50) {
+  // Свайп ВНИЗ - открываем товары
+  if (dy > swipeThreshold) {
     e.preventDefault();
     showProductsPage();
-    isSwiping = false;
+    startY = null;
   }
-  // Для страницы товаров: свайп ВВЕРХ (отрицательный dy) закрывает товары
-  else if (productsPageVisible && dy < -50) {
+}, {passive: false});
+
+// Обработчики для страницы товаров
+productsPage.addEventListener('touchstart', (e) => {
+  startY = e.touches[0].clientY;
+}, {passive: true});
+
+productsPage.addEventListener('touchmove', (e) => {
+  if (!startY) return;
+  
+  currentY = e.touches[0].clientY;
+  const dy = currentY - startY;
+  
+  // Свайп ВВЕРХ - закрываем товары
+  if (dy < -swipeThreshold) {
     e.preventDefault();
     hideProductsPage();
-    isSwiping = false;
+    startY = null;
   }
+}, {passive: false});
+
+// Сброс при окончании касания
+document.addEventListener('touchend', () => {
+  startY = null;
+});// ===== КОРРЕКТНЫЙ ФУНКЦИОНАЛ СВАЙПА =====
+let startY, currentY;
+const swipeThreshold = 50; // Порог срабатывания свайпа
+const productsPage = document.getElementById('products-page');
+const bottomNav = document.querySelector('.bottom-nav');
+
+// Показ страницы товаров (свайп ВНИЗ на главной)
+function showProductsPage() {
+  productsPage.style.display = 'block';
+  productsPage.style.transform = 'translateY(100%)';
+  
+  // Анимация появления
+  setTimeout(() => {
+    productsPage.style.transform = 'translateY(0)';
+    bottomNav.style.transform = 'translateY(100%)';
+  }, 10);
 }
 
-// Обработчик окончания касания
-function handleTouchEnd() {
-  isSwiping = false;
+// Скрытие страницы товаров (свайп ВВЕРХ на товарах)
+function hideProductsPage() {
+  productsPage.style.transform = 'translateY(100%)';
+  bottomNav.style.transform = 'translateY(0)';
+  
+  setTimeout(() => {
+    productsPage.style.display = 'none';
+  }, 300);
 }
 
+// Обработчики для главной страницы
+mainPage.addEventListener('touchstart', (e) => {
+  if (window.scrollY <= 0) {
+    startY = e.touches[0].clientY;
+  }
+}, {passive: true});
+
+mainPage.addEventListener('touchmove', (e) => {
+  if (!startY) return;
+  
+  currentY = e.touches[0].clientY;
+  const dy = currentY - startY;
+  
+  // Свайп ВНИЗ - открываем товары
+  if (dy > swipeThreshold) {
+    e.preventDefault();
+    showProductsPage();
+    startY = null;
+  }
+}, {passive: false});
+
+// Обработчики для страницы товаров
+productsPage.addEventListener('touchstart', (e) => {
+  startY = e.touches[0].clientY;
+}, {passive: true});
+
+productsPage.addEventListener('touchmove', (e) => {
+  if (!startY) return;
+  
+  currentY = e.touches[0].clientY;
+  const dy = currentY - startY;
+  
+  // Свайп ВВЕРХ - закрываем товары
+  if (dy < -swipeThreshold) {
+    e.preventDefault();
+    hideProductsPage();
+    startY = null;
+  }
+}, {passive: false});
+
+// Сброс при окончании касания
+document.addEventListener('touchend', () => {
+  startY = null;
+});
 // Вешаем обработчики на главную страницу
 mainPage.addEventListener('touchstart', handleTouchStart, { passive: true });
 mainPage.addEventListener('touchmove', handleTouchMove, { passive: false });
