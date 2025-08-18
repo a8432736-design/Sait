@@ -2320,190 +2320,142 @@
       }
     }
 
-   // ===== РЕАЛИЗАЦИЯ СВАЙПОВ =====
-    const pageContainer = document.getElementById('pageContainer');
+   // Элементы страниц
     const mainPage = document.getElementById('main-page');
     const productsPage = document.getElementById('products-page');
     const swipeIndicator = document.getElementById('swipeIndicator');
     
-    let startY, currentY, isSwiping = false;
-    const MIN_SWIPE_DISTANCE = 100;
-    let productsPageVisible = false;
-
-    // Функция для показа страницы товаров
+    // Переменные для отслеживания свайпа
+    let startY = 0;
+    let currentY = 0;
+    let isSwiping = false;
+    const swipeThreshold = 100; // Минимальное расстояние для срабатывания свайпа
+    
+    // Показываем страницу товаров
     function showProductsPage() {
-      productsPage.style.display = 'block';
       productsPage.classList.add('active');
       swipeIndicator.classList.remove('visible');
-      productsPageVisible = true;
-      
-      // Прокручиваем вверх страницу товаров при открытии
-      productsPage.scrollTo(0, 0);
     }
-
-    // Функция для скрытия страницы товаров
+    
+    // Скрываем страницу товаров
     function hideProductsPage() {
       productsPage.classList.remove('active');
-      setTimeout(() => {
-        productsPage.style.display = 'none';
-        productsPageVisible = false;
-      }, 300);
     }
-
-    // Обработчик свайпа вниз на главной странице
-    mainPage.addEventListener('touchstart', (e) => {
-      // Проверяем, что мы в самом верху страницы
-      if (window.scrollY <= 0 && !productsPageVisible) {
+    
+    // Обработчик начала касания
+    function handleTouchStart(e) {
+      // Для главной страницы - только если в самом верху
+      if (e.currentTarget === mainPage && mainPage.scrollTop <= 0) {
         startY = e.touches[0].clientY;
         isSwiping = true;
         swipeIndicator.classList.add('visible');
       }
-    }, { passive: true });
-
-    mainPage.addEventListener('touchmove', (e) => {
+      // Для страницы товаров - только если в самом верху
+      else if (e.currentTarget === productsPage && productsPage.scrollTop <= 0) {
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+        swipeIndicator.classList.add('visible');
+      }
+    }
+    
+    // Обработчик движения пальца
+    function handleTouchMove(e) {
       if (!isSwiping) return;
       
       currentY = e.touches[0].clientY;
-      const dy = currentY - startY;
+      const deltaY = currentY - startY;
       
-      // Обрабатываем только свайп вниз
-      if (dy > 0) {
+      // Для главной страницы - только свайп вниз
+      if (e.currentTarget === mainPage && deltaY > 0) {
         e.preventDefault();
-        
-        const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
-        swipeIndicator.style.opacity = progress;
-        swipeIndicator.style.transform = `translateX(-50%) scaleX(${1 + progress * 0.5})`;
-        
-        if (dy > MIN_SWIPE_DISTANCE) {
-          showProductsPage();
-          isSwiping = false;
-        }
-      }
-    }, { passive: false });
-
-    mainPage.addEventListener('touchend', () => {
-      if (!isSwiping) return;
-      
-      swipeIndicator.classList.remove('visible');
-      isSwiping = false;
-    });
-
-    // Обработчик свайпа вверх на странице товаров// ===== РЕАЛИЗАЦИЯ СВАЙПОВ =====
-    const pageContainer = document.getElementById('pageContainer');
+        const progress = Math.min(deltaY / swipeThreshold, 1);// Элементы страниц
     const mainPage = document.getElementById('main-page');
     const productsPage = document.getElementById('products-page');
     const swipeIndicator = document.getElementById('swipeIndicator');
     
-    let startY, currentY, isSwiping = false;
-    const MIN_SWIPE_DISTANCE = 100;
-    let productsPageVisible = false;
-
-    // Функция для показа страницы товаров
+    // Переменные для отслеживания свайпа
+    let startY = 0;
+    let currentY = 0;
+    let isSwiping = false;
+    const swipeThreshold = 100; // Минимальное расстояние для срабатывания свайпа
+    
+    // Показываем страницу товаров
     function showProductsPage() {
-      productsPage.style.display = 'block';
       productsPage.classList.add('active');
       swipeIndicator.classList.remove('visible');
-      productsPageVisible = true;
-      
-      // Прокручиваем вверх страницу товаров при открытии
-      productsPage.scrollTo(0, 0);
     }
-
-    // Функция для скрытия страницы товаров
+    
+    // Скрываем страницу товаров
     function hideProductsPage() {
       productsPage.classList.remove('active');
-      setTimeout(() => {
-        productsPage.style.display = 'none';
-        productsPageVisible = false;
-      }, 300);
     }
-
-    // Обработчик свайпа вниз на главной странице
-    mainPage.addEventListener('touchstart', (e) => {
-      // Проверяем, что мы в самом верху страницы
-      if (window.scrollY <= 0 && !productsPageVisible) {
+    
+    // Обработчик начала касания
+    function handleTouchStart(e) {
+      // Для главной страницы - только если в самом верху
+      if (e.currentTarget === mainPage && mainPage.scrollTop <= 0) {
         startY = e.touches[0].clientY;
         isSwiping = true;
         swipeIndicator.classList.add('visible');
       }
-    }, { passive: true });
-
-    mainPage.addEventListener('touchmove', (e) => {
-      if (!isSwiping) return;
-      
-      currentY = e.touches[0].clientY;
-      const dy = currentY - startY;
-      
-      // Обрабатываем только свайп вниз
-      if (dy > 0) {
-        e.preventDefault();
-        
-        const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
-        swipeIndicator.style.opacity = progress;
-        swipeIndicator.style.transform = `translateX(-50%) scaleX(${1 + progress * 0.5})`;
-        
-        if (dy > MIN_SWIPE_DISTANCE) {
-          showProductsPage();
-          isSwiping = false;
-        }
-      }
-    }, { passive: false });
-
-    mainPage.addEventListener('touchend', () => {
-      if (!isSwiping) return;
-      
-      swipeIndicator.classList.remove('visible');
-      isSwiping = false;
-    });
-
-    // Обработчик свайпа вверх на странице товаров
-    productsPage.addEventListener('touchstart', (e) => {
-      // Проверяем, что мы в самом верху страницы
-      if (window.scrollY <= 0 && productsPageVisible) {
+      // Для страницы товаров - только если в самом верху
+      else if (e.currentTarget === productsPage && productsPage.scrollTop <= 0) {
         startY = e.touches[0].clientY;
         isSwiping = true;
         swipeIndicator.classList.add('visible');
       }
-    }, { passive: true });
-
-    productsPage.addEventListener('touchmove', (e) => {
+    }
+    
+    // Обработчик движения пальца
+    function handleTouchMove(e) {
       if (!isSwiping) return;
       
       currentY = e.touches[0].clientY;
-      const dy = startY - currentY;
+      const deltaY = currentY - startY;
       
-      // Обрабатываем только свайп вверх
-      if (dy > 0 && window.scrollY <= 0) {
+      // Для главной страницы - только свайп вниз
+      if (e.currentTarget === mainPage && deltaY > 0) {
         e.preventDefault();
-        
-        const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
+        const progress = Math.min(deltaY / swipeThreshold, 1);
         swipeIndicator.style.opacity = progress;
-        swipeIndicator.style.transform = translateX(-50%) scaleX(${1 + progress * 0.5});
       }
-    }, { passive: false });
-
-    productsPage.addEventListener('touchend', (e) => {
+      // Для страницы товаров - только свайп вверх
+      else if (e.currentTarget === productsPage && deltaY < 0) {
+        e.preventDefault();
+        const progress = Math.min(-deltaY / swipeThreshold, 1);
+        swipeIndicator.style.opacity = progress;
+      }
+    }
+    
+    // Обработчик окончания касания
+    function handleTouchEnd(e) {
       if (!isSwiping) return;
       
-      const dy = startY - currentY;
-      swipeIndicator.classList.remove('visible');
-      isSwiping = false;
+      const deltaY = currentY - startY;
       
-      if (dy > MIN_SWIPE_DISTANCE && window.scrollY <= 0) {
+      // Для главной страницы - свайп вниз
+      if (e.currentTarget === mainPage && deltaY > swipeThreshold) {
+        showProductsPage();
+      }
+      // Для страницы товаров - свайп вверх
+      else if (e.currentTarget === productsPage && -deltaY > swipeThreshold) {
         hideProductsPage();
       }
-    });
-
-    // Очищаем флаги при окончании касания
-    document.addEventListener('touchend', () => {
+      
+      // Сброс состояния
       isSwiping = false;
       swipeIndicator.classList.remove('visible');
-    });
-
-    // Инициализация - скрываем страницу товаров при загрузке
-    document.addEventListener('DOMContentLoaded', () => {
-      productsPage.style.display = 'none';
-    });
+    }
+    
+    // Добавляем обработчики событий
+    mainPage.addEventListener('touchstart', handleTouchStart, { passive: true });
+    mainPage.addEventListener('touchmove', handleTouchMove, { passive: false });
+    mainPage.addEventListener('touchend', handleTouchEnd);
+    
+    productsPage.addEventListener('touchstart', handleTouchStart, { passive: true });
+    productsPage.addEventListener('touchmove', handleTouchMove, { passive: false });
+    productsPage.addEventListener('touchend', handleTouchEnd);
+        
     // ===== ФУНКЦИИ ДЛЯ СТРАНИЦЫ ТОВАРОВ =====
     const productsData = [
       { id:1, title:"Часы Premium Black", images:[
