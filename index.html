@@ -1473,6 +1473,36 @@
 .swipe-indicator.visible {
   opacity: 1;
 }
+    <style>
+    /* Добавляем новые стили для свайпа */
+    .page-container {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    
+    .swipe-transition {
+      transition: transform 0.3s ease-out;
+    }
+    
+    .swipe-indicator {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 5px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+      z-index: 1002;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .swipe-indicator.visible {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -1935,7 +1965,7 @@
 </div>
 
 <!-- Индикатор свайпа -->
-<div class="swipe-indicator" id="swipeIndicator"></div>
+  <div class="swipe-indicator" id="swipeIndicator"></div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
@@ -2290,17 +2320,25 @@
       }
     }
 
-    // ===== РЕАЛИЗАЦИЯ СВАЙПОВ =====
+   // ===== РЕАЛИЗАЦИЯ СВАЙПОВ =====
+    const pageContainer = document.getElementById('pageContainer');
+    const mainPage = document.getElementById('main-page');
     const productsPage = document.getElementById('products-page');
     const swipeIndicator = document.getElementById('swipeIndicator');
+    
     let startY, currentY, isSwiping = false;
     const MIN_SWIPE_DISTANCE = 100;
+    let productsPageVisible = false;
 
     // Функция для показа страницы товаров
     function showProductsPage() {
       productsPage.style.display = 'block';
       productsPage.classList.add('active');
       swipeIndicator.classList.remove('visible');
+      productsPageVisible = true;
+      
+      // Прокручиваем вверх страницу товаров при открытии
+      productsPage.scrollTo(0, 0);
     }
 
     // Функция для скрытия страницы товаров
@@ -2308,12 +2346,14 @@
       productsPage.classList.remove('active');
       setTimeout(() => {
         productsPage.style.display = 'none';
+        productsPageVisible = false;
       }, 300);
     }
 
     // Обработчик свайпа вниз на главной странице
     mainPage.addEventListener('touchstart', (e) => {
-      if (window.scrollY <= 0) {
+      // Проверяем, что мы в самом верху страницы
+      if (window.scrollY <= 0 && !productsPageVisible) {
         startY = e.touches[0].clientY;
         isSwiping = true;
         swipeIndicator.classList.add('visible');
@@ -2326,11 +2366,81 @@
       currentY = e.touches[0].clientY;
       const dy = currentY - startY;
       
+      // Обрабатываем только свайп вниз
       if (dy > 0) {
         e.preventDefault();
         
         const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
         swipeIndicator.style.opacity = progress;
+        swipeIndicator.style.transform = `translateX(-50%) scaleX(${1 + progress * 0.5})`;
+        
+        if (dy > MIN_SWIPE_DISTANCE) {
+          showProductsPage();
+          isSwiping = false;
+        }
+      }
+    }, { passive: false });
+
+    mainPage.addEventListener('touchend', () => {
+      if (!isSwiping) return;
+      
+      swipeIndicator.classList.remove('visible');
+      isSwiping = false;
+    });
+
+    // Обработчик свайпа вверх на странице товаров// ===== РЕАЛИЗАЦИЯ СВАЙПОВ =====
+    const pageContainer = document.getElementById('pageContainer');
+    const mainPage = document.getElementById('main-page');
+    const productsPage = document.getElementById('products-page');
+    const swipeIndicator = document.getElementById('swipeIndicator');
+    
+    let startY, currentY, isSwiping = false;
+    const MIN_SWIPE_DISTANCE = 100;
+    let productsPageVisible = false;
+
+    // Функция для показа страницы товаров
+    function showProductsPage() {
+      productsPage.style.display = 'block';
+      productsPage.classList.add('active');
+      swipeIndicator.classList.remove('visible');
+      productsPageVisible = true;
+      
+      // Прокручиваем вверх страницу товаров при открытии
+      productsPage.scrollTo(0, 0);
+    }
+
+    // Функция для скрытия страницы товаров
+    function hideProductsPage() {
+      productsPage.classList.remove('active');
+      setTimeout(() => {
+        productsPage.style.display = 'none';
+        productsPageVisible = false;
+      }, 300);
+    }
+
+    // Обработчик свайпа вниз на главной странице
+    mainPage.addEventListener('touchstart', (e) => {
+      // Проверяем, что мы в самом верху страницы
+      if (window.scrollY <= 0 && !productsPageVisible) {
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+        swipeIndicator.classList.add('visible');
+      }
+    }, { passive: true });
+
+    mainPage.addEventListener('touchmove', (e) => {
+      if (!isSwiping) return;
+      
+      currentY = e.touches[0].clientY;
+      const dy = currentY - startY;
+      
+      // Обрабатываем только свайп вниз
+      if (dy > 0) {
+        e.preventDefault();
+        
+        const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
+        swipeIndicator.style.opacity = progress;
+        swipeIndicator.style.transform = `translateX(-50%) scaleX(${1 + progress * 0.5})`;
         
         if (dy > MIN_SWIPE_DISTANCE) {
           showProductsPage();
@@ -2348,7 +2458,8 @@
 
     // Обработчик свайпа вверх на странице товаров
     productsPage.addEventListener('touchstart', (e) => {
-      if (window.scrollY <= 0) {
+      // Проверяем, что мы в самом верху страницы
+      if (window.scrollY <= 0 && productsPageVisible) {
         startY = e.touches[0].clientY;
         isSwiping = true;
         swipeIndicator.classList.add('visible');
@@ -2361,11 +2472,13 @@
       currentY = e.touches[0].clientY;
       const dy = startY - currentY;
       
+      // Обрабатываем только свайп вверх
       if (dy > 0 && window.scrollY <= 0) {
         e.preventDefault();
         
         const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
         swipeIndicator.style.opacity = progress;
+        swipeIndicator.style.transform = translateX(-50%) scaleX(${1 + progress * 0.5});
       }
     }, { passive: false });
 
@@ -2387,6 +2500,10 @@
       swipeIndicator.classList.remove('visible');
     });
 
+    // Инициализация - скрываем страницу товаров при загрузке
+    document.addEventListener('DOMContentLoaded', () => {
+      productsPage.style.display = 'none';
+    });
     // ===== ФУНКЦИИ ДЛЯ СТРАНИЦЫ ТОВАРОВ =====
     const productsData = [
       { id:1, title:"Часы Premium Black", images:[
