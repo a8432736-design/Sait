@@ -14,13 +14,17 @@
       color: white;
       height: 100vh;
       overflow-x: hidden;
-      touch-action: pan-y; /* Разрешаем только вертикальные свайпы */
+      touch-action: pan-y;
     }
 
     /* Стили для главной страницы */
     .main-page {
       display: block;
       background-color: #000000;
+      position: relative;
+      transition: transform 0.3s ease-out;
+      height: 100%;
+      overflow-y: auto;
     }
 
     /* Вкладки сверху (только для главной) */
@@ -1259,37 +1263,12 @@
   overflow-y: auto;
   padding-bottom: 90px;
   display: none;
-  opacity: 0;
   transform: translateY(100%);
-  transition: transform 0.4s cubic-bezier(0.28, 0.11, 0.32, 1), opacity 0.3s;
+  transition: transform 0.3s ease-out;
 }
 
-.products-page.swipe-active::before {
-  content: "";
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 5px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 3px;
-  opacity: 1;
-  transition: opacity 0.3s;
-}
-
-.products-page::before {
-  content: "";
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 5px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 3px;
-  opacity: 0;
-  transition: opacity 0.3s;
+.products-page.active {
+  transform: translateY(0);
 }
 
 .products-header {
@@ -1476,7 +1455,7 @@
   grid-column: 1 / -1;
 }
 
-/* Добавленные стили для свайпа */
+/* Индикатор свайпа */
 .swipe-indicator {
   position: fixed;
   top: 10px;
@@ -1487,11 +1466,12 @@
   background: rgba(255,255,255,0.3);
   border-radius: 3px;
   z-index: 1002;
+  opacity: 0;
   transition: opacity 0.3s;
 }
 
-.swipe-indicator.hidden {
-  opacity: 0;
+.swipe-indicator.visible {
+  opacity: 1;
 }
   </style>
 </head>
@@ -1955,24 +1935,21 @@
 </div>
 
 <!-- Индикатор свайпа -->
-<div class="swipe-indicator hidden" id="swipeIndicator"></div>
+<div class="swipe-indicator" id="swipeIndicator"></div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <script>
     // Инициализация данных пользователя Telegram
     function initUserData() {
-      // Проверяем, что WebApp Telegram доступен
       if (window.Telegram && Telegram.WebApp) {
         const user = Telegram.WebApp.initDataUnsafe?.user;
         
         if (user) {
-          // Устанавливаем имя пользователя
           const username = user.first_name || 'Пират';
           document.getElementById('username').textContent = username;
           document.getElementById('profile-username').textContent = username;
           
-          // Устанавливаем аватар
           const avatarUrl = user.photo_url;
           const avatarElement = document.getElementById('avatar');
           const profileAvatarElement = document.getElementById('profile-avatar-img');
@@ -1981,7 +1958,6 @@
             avatarElement.innerHTML = `<img src="${avatarUrl}" width="140" height="140" style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover;" />`;
             profileAvatarElement.innerHTML = `<img src="${avatarUrl}" width="60" height="60" style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover;" />`;
           } else {
-            // Дефолтный аватар, если фото нет
             const defaultAvatar = `
               <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="70" cy="70" r="70" fill="#2E2E2E"/>
@@ -1999,7 +1975,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       initUserData();
       
-      // Показываем первый слайд на странице склада
       if (document.querySelector('.slide')) {
         showSlide(0);
       }
@@ -2199,21 +2174,16 @@
     const storagePage = document.getElementById('storage-page');
     const navItems = document.querySelectorAll('.bottom-nav .nav-item');
 
-    // Функция для показа страницы
     function showPage(pageElement) {
-      // Список всех страниц
       const allPages = [mainPage, cabinetPage, treasurePage, storagePage];
       
-      // Скрываем все страницы
       allPages.forEach(page => {
         if (page) page.style.display = 'none';
       });
       
-      // Показываем только нужную страницу
       if (pageElement) {
         pageElement.style.display = 'block';
         
-        // Для страницы клада используем flex
         if (pageElement.id === 'treasure-page') {
           pageElement.style.display = 'flex';
         }
@@ -2222,24 +2192,21 @@
       triggerVibration();
     }
 
-   // Обновление активного состояния навигации
-function updateActiveNav(activeItem) {
-  navItems.forEach(item => {
-    item.classList.remove('active');
-    const indicator = item.querySelector('.active-indicator');
-    if (indicator) indicator.remove();
-  });
-  
-  // Добавляем активное состояние только если передан элемент
-  if (activeItem) {
-    activeItem.classList.add('active');
-    const indicator = document.createElement('div');
-    indicator.className = 'active-indicator';
-    activeItem.appendChild(indicator);
-  }
-}
+    function updateActiveNav(activeItem) {
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        const indicator = item.querySelector('.active-indicator');
+        if (indicator) indicator.remove();
+      });
+      
+      if (activeItem) {
+        activeItem.classList.add('active');
+        const indicator = document.createElement('div');
+        indicator.className = 'active-indicator';
+        activeItem.appendChild(indicator);
+      }
+    }
 
-    // Обработчики для навигации
     document.getElementById('cabinet-nav-item').addEventListener('click', function(e) {
       e.preventDefault();
       showPage(cabinetPage);
@@ -2258,7 +2225,6 @@ function updateActiveNav(activeItem) {
       updateActiveNav(this);
     });
 
-    // Обработчик для главной страницы (если есть соответствующий элемент навигации)
     const mainNavItem = document.getElementById('main-nav-item');
     if (mainNavItem) {
       mainNavItem.addEventListener('click', function(e) {
@@ -2268,7 +2234,6 @@ function updateActiveNav(activeItem) {
       });
     }
 
-    // Обработчики для кнопок на странице клада
     document.querySelectorAll('.treasure-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         triggerVibration();
@@ -2276,7 +2241,6 @@ function updateActiveNav(activeItem) {
       });
     });
 
-    // Функции для работы склада
     function showSlide(index) {
       document.querySelectorAll('.tab-btn').forEach((btn, i) => {
         btn.classList.toggle('active', i === index);
@@ -2292,39 +2256,26 @@ function updateActiveNav(activeItem) {
       alert(`Заказ на товар: ${productName}`);
     }
 
-    // Инициализация - показываем главную страницу по умолчанию
     showPage(mainPage);
    
 
-    // Функции для страницы расходов
     function goBackToCabinet() {
       document.getElementById('expenses-page').style.display = 'none';
       triggerVibration();
     }
 
-// Обработчик для кнопки "Расходы" в каюте
     document.querySelector('.info-box.clickable').addEventListener('click', function(e) {
       e.preventDefault();
       document.getElementById('expenses-page').style.display = 'block';
       triggerVibration();
-      
-      // Инициализация календаря расходов (если нужно)
-      initExpensesCalendar();
     });
 
-    // Функция для инициализации календаря (если её ещё нет)
-    function initExpensesCalendar() {
-      // Ваш код для работы с календарем расходов
-      // (убедитесь, что он уже есть в вашем скрипте)
-    }
-    // Функция для возврата в каюту
     function goBackToCabinet() {
       document.getElementById('profile-page').style.display = 'none';
       document.getElementById('cabinet-page').style.display = 'block';
       triggerVibration();
     }
 
-    // Обработчик для кнопки "Управление профилем" в каюте
     document.querySelector('a[href*="d339d82edd45176b"] button').addEventListener('click', function(e) {
       e.preventDefault();
       document.getElementById('profile-page').style.display = 'block';
@@ -2336,138 +2287,104 @@ function updateActiveNav(activeItem) {
       triggerVibration();
       if (typeof action === 'string' && action.startsWith('http')) {
         window.open(action, '_blank');
-      } else {
-        // Другая обработка клика
       }
     }
 
-    // ===== ИСПРАВЛЕННЫЙ ФУНКЦИОНАЛ СВАЙПА =====
-    let startY, currentY, isSwiping = false;
-    let productsPageVisible = false;
+    // ===== РЕАЛИЗАЦИЯ СВАЙПОВ =====
     const productsPage = document.getElementById('products-page');
-    const bottomNav = document.querySelector('.bottom-nav');
     const swipeIndicator = document.getElementById('swipeIndicator');
+    let startY, currentY, isSwiping = false;
     const MIN_SWIPE_DISTANCE = 100;
 
     // Функция для показа страницы товаров
     function showProductsPage() {
-      productsPageVisible = true;
-      bottomNav.style.transition = 'transform 0.4s cubic-bezier(0.28, 0.11, 0.32, 1)';
-      bottomNav.style.transform = 'translateY(100%)';
-      
       productsPage.style.display = 'block';
-      productsPage.style.opacity = '0';
-      productsPage.style.transform = 'translateY(100%)';
-      productsPage.style.transition = 'transform 0.4s cubic-bezier(0.28, 0.11, 0.32, 1), opacity 0.3s';
-      
-      setTimeout(() => {
-        productsPage.style.opacity = '1';
-        productsPage.style.transform = 'translateY(0)';
-      }, 10);
-      
-      // Загружаем товары при первом открытии
-      if (document.getElementById('productsFeed').children.length === 0) {
-        loadProductsData();
-      }
+      productsPage.classList.add('active');
+      swipeIndicator.classList.remove('visible');
     }
 
     // Функция для скрытия страницы товаров
     function hideProductsPage() {
-      productsPageVisible = false;
-      productsPage.style.transform = 'translateY(100%)';
-      productsPage.style.opacity = '0';
-      
+      productsPage.classList.remove('active');
       setTimeout(() => {
         productsPage.style.display = 'none';
-        bottomNav.style.transform = 'translateY(0)';
-      }, 400);
+      }, 300);
     }
 
     // Обработчик свайпа вниз на главной странице
     mainPage.addEventListener('touchstart', (e) => {
-      if (window.scrollY <= 0 && !productsPageVisible) {
+      if (window.scrollY <= 0) {
         startY = e.touches[0].clientY;
         isSwiping = true;
-        swipeIndicator.classList.remove('hidden');
+        swipeIndicator.classList.add('visible');
       }
     }, { passive: true });
 
     mainPage.addEventListener('touchmove', (e) => {
-      if (!isSwiping || productsPageVisible) return;
+      if (!isSwiping) return;
       
       currentY = e.touches[0].clientY;
       const dy = currentY - startY;
       
-      if (dy > 0) { // Только свайп вниз
+      if (dy > 0) {
         e.preventDefault();
         
-        // Показываем индикатор свайпа
         const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
         swipeIndicator.style.opacity = progress;
         
         if (dy > MIN_SWIPE_DISTANCE) {
           showProductsPage();
           isSwiping = false;
-          swipeIndicator.classList.add('hidden');
         }
       }
     }, { passive: false });
 
     mainPage.addEventListener('touchend', () => {
-      if (!isSwiping || productsPageVisible) return;
+      if (!isSwiping) return;
       
-      swipeIndicator.classList.add('hidden');
+      swipeIndicator.classList.remove('visible');
       isSwiping = false;
     });
 
     // Обработчик свайпа вверх на странице товаров
     productsPage.addEventListener('touchstart', (e) => {
-      if (productsPageVisible && window.scrollY <= 0) {
+      if (window.scrollY <= 0) {
         startY = e.touches[0].clientY;
         isSwiping = true;
-        swipeIndicator.classList.remove('hidden');
+        swipeIndicator.classList.add('visible');
       }
     }, { passive: true });
 
     productsPage.addEventListener('touchmove', (e) => {
-      if (!isSwiping || !productsPageVisible) return;
+      if (!isSwiping) return;
       
       currentY = e.touches[0].clientY;
       const dy = startY - currentY;
       
-      if (window.scrollY <= 0) {
-        if (dy > 0) { // Свайп вверх
-          e.preventDefault();
-          
-          // Показываем индикатор свайпа
-          const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
-          swipeIndicator.style.opacity = progress;
-          
-          // Плавное затемнение при свайпе
-          productsPage.style.opacity = `${1 - dy / 300}`;
-        }
+      if (dy > 0 && window.scrollY <= 0) {
+        e.preventDefault();
+        
+        const progress = Math.min(dy / MIN_SWIPE_DISTANCE, 1);
+        swipeIndicator.style.opacity = progress;
       }
     }, { passive: false });
 
     productsPage.addEventListener('touchend', (e) => {
-      if (!isSwiping || !productsPageVisible) return;
+      if (!isSwiping) return;
       
       const dy = startY - currentY;
-      swipeIndicator.classList.add('hidden');
+      swipeIndicator.classList.remove('visible');
       isSwiping = false;
       
       if (dy > MIN_SWIPE_DISTANCE && window.scrollY <= 0) {
         hideProductsPage();
-      } else {
-        // Возвращаем нормальную прозрачность если не досвайпнули
-        productsPage.style.opacity = '1';
       }
     });
 
     // Очищаем флаги при окончании касания
     document.addEventListener('touchend', () => {
       isSwiping = false;
-      swipeIndicator.classList.add('hidden');
+      swipeIndicator.classList.remove('visible');
     });
 
     // ===== ФУНКЦИИ ДЛЯ СТРАНИЦЫ ТОВАРОВ =====
@@ -2507,7 +2424,6 @@ function updateActiveNav(activeItem) {
       loadingSpinner.style.display = 'block';
       productsFeed.innerHTML = '';
       
-      // Имитация загрузки
       setTimeout(() => {
         loadingSpinner.style.display = 'none';
         
@@ -2546,14 +2462,12 @@ function updateActiveNav(activeItem) {
           </div>
         `;
         productCard.addEventListener('click', () => {
-          // Здесь можно открыть детальную страницу товара
           alert(`Открываем ${product.title}`);
         });
         productsFeed.appendChild(productCard);
       });
     }
     
-    // Инициализация страницы товаров
     document.getElementById('searchInputProducts').addEventListener('input', (e) => {
       loadProductsData(activeCategory, e.target.value);
     });
